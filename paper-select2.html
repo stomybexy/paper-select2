@@ -58,24 +58,41 @@ Example:
                 }
                 ;
             }
+            
+            iron-dropdown {
+                max-height: 400px;
+                background: white;
+                position: absolute;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            
+            paper-material {
+                
+                z-index: 10;
+            }
+
         </style>
 
 
         <div>
-            <paper-input-container on-tap="open" hidden$="[[opened]]">
+
+            <paper-input-container on-tap="open" hidden$="[[opened]]" readonly>
                 <label hidden$="[[!label]]">[[label]]</label>
-                <input is="iron-input" value="[[_computeItemLabel(selected)]]" bind-value="[[_computeItemLabel(selected)]]" type="text" class="dropdown-trigger">
+                <input id="val" is="iron-input" value="[[_computeItemLabel(selected)]]" bind-value="[[_computeItemLabel(selected)]]" type="text" class="dropdown-trigger">
             </paper-input-container>
 
 
+
         </div>
-        <iron-dropdown auto-fit-on-attach vertical-align="down" id="dropdown" opened="{{opened}}">
+        <paper-input-container hidden$="[[!opened]]" on-tap="open">
+            <label hidden$="[[!searchLabel]]">[[searchLabel]]</label>
+            <input id="search" is="iron-input" bind-value="{{typedValue::input}}" type="search" class="dropdown-trigger" bind-value="{{typedValue::input}}" autofocus>
+        </paper-input-container>
+        <iron-dropdown vertical-align="down" id="dropdown" opened="{{opened}}" stop-keyboard-event-propagation>
 
             <paper-material elevation="1" class="dropdown-content">
-                <paper-input-container hidden$="[[!opened]]">
-                    <label hidden$="[[!searchLabel]]">[[searchLabel]]</label>
-                    <input is="iron-input" bind-value="{{typedValue::input}}" type="search" class="dropdown-trigger" bind-value="{{typedValue::input}}" autofocus>
-                </paper-input-container>
+
 
                 <paper-listbox attr-for-selected="value" on-tap="_onSelect" selected="{{selected}}" stop-keyboard-event-propagation>
                     <template is="dom-repeat" items="[[filterFn(data.*, typedValue)]]" id="domRepeat">
@@ -85,6 +102,24 @@ Example:
                 </paper-listbox>
             </paper-material>
         </iron-dropdown>
+
+
+        <!--
+        <paper-dropdown-menu label="Dinosaurs" opened='{{opened}}' noink no-animations id="dropdown" stop-keyboard-event-propagation>
+            <div class="dropdown-content">
+               <paper-input-container hidden$="[[!opened]]" stop-keyboard-event-propagation>
+                    <label hidden$="[[!searchLabel]]">[[searchLabel]]</label>
+                    <input is="iron-input" bind-value="{{typedValue::input}}" type="search" class="dropdown-trigger" bind-value="{{typedValue::input}}" autofocus on-tap="open">
+                </paper-input-container>
+                <paper-listbox attr-for-selected="value" on-tap="_onSelect" selected="{{selected}}">
+                    <template is="dom-repeat" items="[[filterFn(data.*, typedValue)]]" id="domRepeat">
+                        <paper-item value="[[item]]">[[_computeItemLabel(item)]]</paper-item>
+                    </template>
+
+                </paper-listbox>
+            </div>
+        </paper-dropdown-menu>
+-->
 
     </template>
 
@@ -137,7 +172,8 @@ Example:
                     notify: true,
                     reflectToAttribute: true,
                     value: ''
-                },searchLabel: {
+                },
+                searchLabel: {
                     type: String,
                     notify: true,
                     reflectToAttribute: true,
@@ -229,13 +265,20 @@ Example:
             open: function () {
                 this.$.dropdown.open();
                 this.opened = true;
+                this.$.search.focus();
             },
             _computeItemLabel: function (item) {
+                if (!item) return;
                 return (this.attrForLabel && item[this.attrForLabel]) || item;
             },
             _onSelect: function (e) {
                 //                this.typedValue=null;
+                var self = this;
                 this.$.dropdown.close();
+                setTimeout(function () {
+                    self.$.val.focus();
+
+                }, 0)
             },
             filterFn: function (data, value) {
                 var self = this;

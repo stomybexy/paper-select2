@@ -24,7 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     <template is="dom-bind" id="app">
-        <paper-select2 attr-for-label="name" data="[[data]]" selected="{{selected}}" label="spécialité" style="max-width:200px">
+        <paper-select2 search-label="search" attr-for-label="name" data="[[data]]" selected="{{selected}}" label="spécialité" style="max-width:200px">
         </paper-select2>
         <div>[[stringify(selected)]]</div>
     </template>
