@@ -10,10 +10,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
 <link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-material/paper-material.html">
 <link rel="import" href="../iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
 
 
 
@@ -44,14 +47,6 @@ Example:
                 box-sizing: border-box;
             }
             
-            .author img {
-                display: block;
-                float: left;
-                margin-right: 5px;
-                max-height: 100px;
-                max-width: 100px;
-            }
-            
             paper-item {
                 --paper-item: {
                     cursor: pointer;
@@ -59,67 +54,50 @@ Example:
                 ;
             }
             
-            iron-dropdown {
-                max-height: 400px;
-                background: white;
-                position: absolute;
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
             
             paper-material {
-                
-                z-index: 10;
+                max-height: 200px;
+                overflow-y: scroll;
+                position: absolute;
+                z-index: 100;
+            }
+              paper-menu {
+                  --paper-menu:{
+                      
+                  }
+               
+            }
+            
+            
+            .iron-selected {
+/*                background: #E0E0E0;*/
             }
 
         </style>
 
 
-        <div>
+        <div class="container">
+            <paper-input value="[[_computeItemLabel(selected)]]" label="{{label}}" hidden$="[[opened]]" 
+                         focused="{{focused}}" on-tap="open" readonly>
+            </paper-input>
+            <div hidden$="[[!opened]]">
+                <paper-input id="search" on-tap="searchTap" value="{{typedValue}}" label="{{searchLabel}}" focused="{{searchFocused}}">
+                </paper-input>
 
-            <paper-input-container on-tap="open" hidden$="[[opened]]" readonly>
-                <label hidden$="[[!label]]">[[label]]</label>
-                <input id="val" is="iron-input" value="[[_computeItemLabel(selected)]]" bind-value="[[_computeItemLabel(selected)]]" type="text" class="dropdown-trigger">
-            </paper-input-container>
-
-
+                <paper-material class="dropdown">
+                    <paper-menu multi="{{multi}}" selected-item="{{menuFocused}}" on-tap="_onSelect" 
+                                attr-for-selected="value"  selected="{{selected}}" selected-values="{{selectedValues}}">
+                        <template is="dom-repeat" items="[[_data]]" id="domRepeat">
+                            
+                            <paper-item value="[[item]]">
+                                [[_computeItemLabel(item)]]
+                            </paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-material>
+            </div>
 
         </div>
-        <paper-input-container hidden$="[[!opened]]" on-tap="open">
-            <label hidden$="[[!searchLabel]]">[[searchLabel]]</label>
-            <input id="search" is="iron-input" bind-value="{{typedValue::input}}" type="search" class="dropdown-trigger" bind-value="{{typedValue::input}}" autofocus>
-        </paper-input-container>
-        <iron-dropdown vertical-align="down" id="dropdown" opened="{{opened}}" stop-keyboard-event-propagation>
-
-            <paper-material elevation="1" class="dropdown-content">
-
-
-                <paper-listbox attr-for-selected="value" on-tap="_onSelect" selected="{{selected}}" stop-keyboard-event-propagation>
-                    <template is="dom-repeat" items="[[filterFn(data.*, typedValue)]]" id="domRepeat">
-                        <paper-item value="[[item]]">[[_computeItemLabel(item)]]</paper-item>
-                    </template>
-
-                </paper-listbox>
-            </paper-material>
-        </iron-dropdown>
-
-
-        <!--
-        <paper-dropdown-menu label="Dinosaurs" opened='{{opened}}' noink no-animations id="dropdown" stop-keyboard-event-propagation>
-            <div class="dropdown-content">
-               <paper-input-container hidden$="[[!opened]]" stop-keyboard-event-propagation>
-                    <label hidden$="[[!searchLabel]]">[[searchLabel]]</label>
-                    <input is="iron-input" bind-value="{{typedValue::input}}" type="search" class="dropdown-trigger" bind-value="{{typedValue::input}}" autofocus on-tap="open">
-                </paper-input-container>
-                <paper-listbox attr-for-selected="value" on-tap="_onSelect" selected="{{selected}}">
-                    <template is="dom-repeat" items="[[filterFn(data.*, typedValue)]]" id="domRepeat">
-                        <paper-item value="[[item]]">[[_computeItemLabel(item)]]</paper-item>
-                    </template>
-
-                </paper-listbox>
-            </div>
-        </paper-dropdown-menu>
--->
 
     </template>
 
@@ -128,45 +106,8 @@ Example:
             is: 'paper-select2',
 
             properties: {
-                /**
-                 * `fancy` indicates that the element should don a monocle and tophat,
-                 * while checking its pocket watch.
-                 */
-                fancy: Boolean,
 
-                /**
-                 * Describes the author of the element, but is really just an excuse to
-                 * show off JSDoc annotations.
-                 *
-                 * @type {{name: string, image: string}}
-                 */
-                author: {
-                    type: Object,
-                    // Use `value` to provide a default value for a property, by setting it
-                    // on your element's prototype.
-                    //
-                    // If you provide a function, as we do here, Polymer will call that
-                    // _per element instance_.
-                    //
-                    // We do that to ensure that each element gets its own copy of the
-                    // value, rather than having it shared across all instances (via the
-                    // prototype).
-                    value: function () {
-                        return {
-                            name: 'Dimitri Glazkov',
-                            image: 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg',
-                        };
-                    }
-                },
-                data: {
-                    type: Array,
-                    notify: true,
-                    value: function () {
-                        return [
-
-                        ];
-                    }
-                },
+                data: Array,
                 label: {
                     type: String,
                     notify: true,
@@ -182,27 +123,48 @@ Example:
                 _data: {
                     type: Array,
                     notify: true,
-                    computed: 'filterFn(data.*, typedValue)'
+                    value: function () {
+                            return [];
+                        }
+                        //                    computed: 'filterFn(data.*, typedValue)'
                 },
                 attrForLabel: String,
                 attrForSelected: String,
                 selected: {
                     type: Object,
-                    notify: true,
-                    reflectToAttribute: true
+                    notify: true
+                }, 
+                selectedValues: {
+                    type: Array,
+                    notify: true
                 },
                 typedValue: {
                     type: String,
                     notify: true,
                     value: null
                 },
-                _opened: {
+                opened: {
                     type: Boolean,
                     notify: true,
                     value: false
+                },
+                focused: {
+                    type: Boolean
+                },
+                searchFocused: {
+                    type: Boolean,
+                    value: false
+                },
+                menuFocused: {
+                    type: Object
+                },
+                multi: {
+                    type: Boolean,
+                    notify: true,
+                    reflectToAttribute: true
                 }
             },
-
+            observers: ['filterFn(data.*, typedValue)'],
 
             // Element Lifecycle
 
@@ -213,6 +175,11 @@ Example:
                 //
                 // This is the point where you should make modifications to the DOM (when
                 // necessary), or kick off any processes the element wants to perform.
+                var self = this;
+                var html = document.querySelector('html');
+                html.addEventListener("tap", function () {
+                    self.opened = false;
+                });
             },
 
             attached: function () {
@@ -233,52 +200,29 @@ Example:
 
             // Element Behavior
 
-            /**
-             * Sometimes it's just nice to say hi.
-             *
-             * @param {string} greeting A positive greeting.
-             * @return {string} The full greeting.
-             */
-            sayHello: function (greeting) {
-                var response = greeting || 'Hello World!';
-                return 'paper-select2 says, ' + response;
-            },
-
-            /**
-             * The `paper-select2-lasers` event is fired whenever `fireLasers` is called.
-             *
-             * @event paper-select2-lasers
-             * @detail {{sound: String}}
-             */
-
-            /**
-             * Attempt to destroy this element's enemies with a beam of light!
-             *
-             * Or, at least, dispatch an event in the vain hope that someone else will
-             * do the zapping.
-             */
-            fireLasers: function () {
-                this.fire('paper-select2-lasers', {
-                    sound: 'Pew pew!'
-                });
-            },
-            open: function () {
-                this.$.dropdown.open();
+            open: function (e) {
+                //                this.$.dropdown.open();
                 this.opened = true;
                 this.$.search.focus();
+                e.stopPropagation();
             },
             _computeItemLabel: function (item) {
                 if (!item) return;
                 return (this.attrForLabel && item[this.attrForLabel]) || item;
             },
             _onSelect: function (e) {
-                //                this.typedValue=null;
-                var self = this;
-                this.$.dropdown.close();
-                setTimeout(function () {
-                    self.$.val.focus();
+                if(this.multi){
+                    return;
+                }
+                this.opened = false;
 
-                }, 0)
+                //                this.typedValue=this._computeItemLabel(this.selected);
+                //                var self = this;
+                //                this.$.dropdown.close();
+                //                setTimeout(function () {
+                //                    self.$.val.focus();
+                //
+                //                }, 0)
             },
             filterFn: function (data, value) {
                 var self = this;
@@ -286,12 +230,17 @@ Example:
                 var r = RegExp(value, 'i');
 
                 if (!value) {
-                    return this.data;
+                    this._data = this.data;
+                    return;
                 }
 
-                return this.data.filter(function (v) {
+                this._data = this.data.filter(function (v) {
                     return (r.test(self._computeItemLabel(v)) ? v : null);
                 });
+            },
+
+            searchTap: function(e){
+                e.stopPropagation();
             }
 
 

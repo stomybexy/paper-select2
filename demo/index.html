@@ -20,13 +20,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <body unresolved>
 
-    <p>An example of <code>&lt;paper-select2&gt;</code>:</p>
+
+
+
+
+
+
+
 
 
     <template is="dom-bind" id="app">
-        <paper-select2 search-label="search" attr-for-label="name" data="[[data]]" selected="{{selected}}" label="spécialité" style="max-width:200px">
+        <p>An example of <code>&lt;paper-select2&gt;</code>: (single selection)</p>
+
+        <paper-select2 search-label="search" attr-for-label="name" data="[[data]]" selected="{{selected}}" label="spécialité" style="max-width:200px;">
+
         </paper-select2>
-        <div>[[stringify(selected)]]</div>
+
+        <div>Selected: {{stringify(selected)}}</div>
+
+        <hr />
+        <p>An example of <code>&lt;paper-select2&gt;</code>: (multiple selection)</p>
+
+        <paper-select2 multi search-label="search" attr-for-label="name" data="[[data]]" 
+                       selected-values="{{selectedValues}}" label="spécialité" style="max-width:200px">
+        </paper-select2>
+        <template is="dom-repeat" items="{{selectedValues}}">
+            <div>{{stringify(item)}}</div>
+        </template>
     </template>
 
 
@@ -36,7 +56,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             {
                 code: 'GEN',
                 name: 'Généraliste'
+            }, {
+                code: 'GYN',
+                name: 'Gynécologue'
+            },
+            {
+                code: 'DEN',
+                name: 'Dentiste'
+            },
+            {
+                code: 'RAD',
+                name: 'Radiologue'
             },{
+                code: 'GEN',
+                name: 'Généraliste'
+            }, {
+                code: 'GYN',
+                name: 'Gynécologue'
+            },
+            {
+                code: 'DEN',
+                name: 'Dentiste'
+            },
+            {
+                code: 'RAD',
+                name: 'Radiologue'
+            },{
+                code: 'GEN',
+                name: 'Généraliste'
+            }, {
+                code: 'GYN',
+                name: 'Gynécologue'
+            },
+            {
+                code: 'DEN',
+                name: 'Dentiste'
+            },
+            {
+                code: 'RAD',
+                name: 'Radiologue'
+            },{
+                code: 'GEN',
+                name: 'Généraliste'
+            }, {
+                code: 'GYN',
+                name: 'Gynécologue'
+            },
+            {
+                code: 'DEN',
+                name: 'Dentiste'
+            },
+            {
+                code: 'RAD',
+                name: 'Radiologue'
+            },{
+                code: 'GEN',
+                name: 'Généraliste'
+            }, {
                 code: 'GYN',
                 name: 'Gynécologue'
             },
@@ -49,10 +125,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 name: 'Radiologue'
             }
         ]
-        app.stringify = function(data){
+        app.stringify = function (data) {
             return JSON.stringify(data);
         }
-       
     </script>
 
 </body>
