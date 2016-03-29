@@ -54,41 +54,41 @@ Example:
                 ;
             }
             
-            
             paper-material {
                 max-height: 200px;
-                overflow-y: scroll;
+                overflow-y: auto;
                 position: absolute;
                 z-index: 100;
-            }
-              paper-menu {
-                  --paper-menu:{
-                      
-                  }
-               
+                width: 100%;
             }
             
+            paper-menu {
+                --paper-menu: {
+                    
+                   
+                }
+            }
+            .inner-container{
+                position: relative;
+            }
             
             .iron-selected {
-/*                background: #E0E0E0;*/
+                /*                background: #E0E0E0;*/
             }
-
         </style>
 
 
         <div class="container">
-            <paper-input value="[[_computeItemLabel(selected)]]" label="{{label}}" hidden$="[[opened]]" 
-                         focused="{{focused}}" on-tap="open" readonly>
+            <paper-input value="[[_computeItemLabel(selected)]]" label="{{label}}" hidden$="[[opened]]" focused="{{focused}}" on-tap="open" readonly>
             </paper-input>
-            <div hidden$="[[!opened]]">
-                <paper-input id="search" on-tap="searchTap" value="{{typedValue}}" label="{{searchLabel}}" focused="{{searchFocused}}">
+            <div hidden$="[[!opened]]" class="inner-container">
+                <paper-input id="search" on-tap="searchTap" value="{{typedValue}}" label="{{searchLabel}}" focused="{{searchFocused}}" type="search">
                 </paper-input>
 
                 <paper-material class="dropdown">
-                    <paper-menu multi="{{multi}}" selected-item="{{menuFocused}}" on-tap="_onSelect" 
-                                attr-for-selected="value"  selected="{{selected}}" selected-values="{{selectedValues}}">
+                    <paper-menu multi="{{multi}}" selected-item="{{menuFocused}}" on-tap="_onSelect" attr-for-selected="value" selected="{{selected}}" selected-values="{{selectedValues}}">
                         <template is="dom-repeat" items="[[_data]]" id="domRepeat">
-                            
+
                             <paper-item value="[[item]]">
                                 [[_computeItemLabel(item)]]
                             </paper-item>
@@ -133,7 +133,7 @@ Example:
                 selected: {
                     type: Object,
                     notify: true
-                }, 
+                },
                 selectedValues: {
                     type: Array,
                     notify: true
@@ -211,7 +211,7 @@ Example:
                 return (this.attrForLabel && item[this.attrForLabel]) || item;
             },
             _onSelect: function (e) {
-                if(this.multi){
+                if (this.multi) {
                     return;
                 }
                 this.opened = false;
@@ -239,7 +239,7 @@ Example:
                 });
             },
 
-            searchTap: function(e){
+            searchTap: function (e) {
                 e.stopPropagation();
             }
 
